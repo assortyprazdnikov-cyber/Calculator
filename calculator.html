@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Калькулятор стоимости ремонта</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAFAF7;--warm-white:#F5F4F0;--stone:#E8E6DF;--stone-dark:#C8C5BB;
+  --text-primary:#111009;--text-secondary:#3A3830;--text-hint:#6B6860;
+  --accent:#B8854A;--accent-light:#F5EDE0;--accent-hover:#A3723A;
+  --border:rgba(60,55,45,0.15);--border-hover:rgba(60,55,45,0.3);
+  --radius:10px;--radius-lg:16px;
+}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-primary);min-height:100vh;}
+.calc-wrap{max-width:660px;margin:0 auto;padding:2.5rem 1.25rem 3rem;}
+.calc-eyebrow{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:0.75rem;}
+.calc-title{font-family:'Jost',sans-serif;font-size:1.5rem;font-weight:500;line-height:1.2;color:var(--text-primary);letter-spacing:0.06em;text-transform:uppercase;}
+.calc-subtitle{font-size:0.9rem;color:var(--text-secondary);margin-top:0.6rem;line-height:1.6;margin-bottom:2.5rem;}
+.section{margin-bottom:2rem;}
+.section-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7A7060;font-weight:500;margin-bottom:0.85rem;}
+.area-field{display:flex;align-items:center;background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color 0.2s;}
+.area-field:focus-within{border-color:var(--accent);}
+.area-input{flex:1;border:none;outline:none;padding:0.85rem 1rem;font-size:1.1rem;font-family:'Jost',sans-serif;color:var(--text-primary);background:transparent;-moz-appearance:textfield;}
+.area-input::-webkit-outer-spin-button,.area-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.area-unit{padding:0.85rem 1rem 0.85rem 0;font-size:0.9rem;color:var(--text-secondary);}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.type-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;cursor:pointer;transition:all 0.18s;position:relative;overflow:hidden;}
+.type-card:hover{border-color:var(--border-hover);background:var(--warm-white);}
+.type-card.active{border-color:var(--accent);background:var(--accent-light);}
+.type-card.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
+.type-name{font-size:0.9rem;font-weight:500;color:var(--text-primary);margin-bottom:0.2rem;}
+.type-card.active .type-name{color:var(--accent-hover);}
+.type-price{font-size:0.8rem;color:var(--text-secondary);}
+.type-card.active .type-price{color:var(--accent);}
+.options-list{display:flex;flex-direction:column;gap:0.5rem;}
+.option-item{display:flex;align-items:center;gap:0.85rem;background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:0.8rem 1rem;cursor:pointer;transition:all 0.18s;user-select:none;}
+.option-item:hover{border-color:var(--border-hover);background:var(--warm-white);}
+.option-item.checked{border-color:var(--accent);background:var(--accent-light);}
+.custom-check{width:18px;height:18px;border:1.5px solid var(--stone-dark);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;background:#fff;}
+.option-item.checked .custom-check{background:var(--accent);border-color:var(--accent);}
+.check-icon{display:none;width:10px;height:10px;}
+.option-item.checked .check-icon{display:block;}
+.check-icon svg{stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.option-name{font-size:0.9rem;color:var(--text-primary);}
+.option-item.checked .option-name{color:var(--accent-hover);}
+.option-add{font-size:0.78rem;color:var(--text-secondary);margin-top:0.1rem;}
+.option-item.checked .option-add{color:var(--accent);}
+.result-block{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;}
+.result-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6B6860;font-weight:500;margin-bottom:0.75rem;}
+.result-range{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:400;color:var(--text-primary);line-height:1.2;}
+.result-range span{color:var(--accent);}
+.result-note{font-size:0.82rem;color:var(--text-secondary);margin-top:0.5rem;line-height:1.5;}
+.lead-block{background:var(--warm-white);border:0.5px solid var(--stone);border-radius:var(--radius-lg);padding:1.75rem;}
+.lead-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--text-primary);margin-bottom:0.5rem;line-height:1.3;}
+.lead-sub{font-size:0.9rem;color:#2E2C28;line-height:1.65;margin-bottom:1.25rem;}
+.form-fields{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;}
+.form-input{width:100%;border:0.5px solid var(--border);border-radius:var(--radius);padding:0.8rem 1rem;font-size:0.9rem;font-family:'Jost',sans-serif;color:var(--text-primary);background:#fff;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--accent);}
+.form-input::placeholder{color:var(--text-hint);}
+.cta-btn{width:100%;background:linear-gradient(135deg,#D4883A 0%,#B8691F 100%);color:#fff;border:none;border-radius:var(--radius);padding:1rem 1.5rem;font-size:0.95rem;font-family:'Jost',sans-serif;font-weight:500;letter-spacing:0.02em;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 18px rgba(184,101,31,0.35);}
+.cta-btn:hover:not(:disabled){background:linear-gradient(135deg,#E09440 0%,#C4751F 100%);box-shadow:0 6px 24px rgba(184,101,31,0.45);transform:translateY(-1px);}
+.cta-btn:active:not(:disabled){transform:translateY(0) scale(0.99);}
+.cta-btn:disabled{opacity:0.65;cursor:not-allowed;}
+.send-error{display:none;font-size:0.8rem;color:#b94040;background:#fff0f0;border:0.5px solid #f5c0c0;border-radius:var(--radius);padding:0.75rem 1rem;margin-top:0.75rem;line-height:1.55;}
+.success-msg{display:none;text-align:center;padding:1rem 0;}
+.success-icon{width:48px;height:48px;background:var(--accent-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--text-primary);margin-bottom:0.5rem;}
+.success-text{font-size:0.85rem;color:var(--text-secondary);line-height:1.65;max-width:380px;margin:0 auto;}
+@media(max-width:480px){.calc-title{font-size:1.15rem}.result-range{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div class="calc-wrap">
+  <div class="calc-eyebrow">Калькулятор</div>
+  <h1 class="calc-title">Предварительный расчет стоимости ремонта</h1>
+  <p class="calc-subtitle">Укажите параметры — стоимость пересчитается мгновенно</p>
+
+  <div class="section">
+    <div class="section-label">Площадь квартиры</div>
+    <div class="area-field">
+      <input class="area-input" type="number" id="area" value="40" min="1" max="999"/>
+      <span class="area-unit">кв. м</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Тип ремонта</div>
+    <div class="type-grid" id="typeGrid">
+      <div class="type-card active" data-price="18000" data-label="GreyBox">
+        <div class="type-name">GreyBox</div>
+        <div class="type-price">18 000 ₽/м²</div>
+      </div>
+      <div class="type-card" data-price="10000" data-label="Эконом">
+        <div class="type-name">Эконом</div>
+        <div class="type-price">от 10 000 ₽/м²</div>
+      </div>
+      <div class="type-card" data-price="15000" data-label="Стандартный">
+        <div class="type-name">Стандартный</div>
+        <div class="type-price">от 15 000 ₽/м²</div>
+      </div>
+      <div class="type-card" data-price="35000" data-label="Дизайнерский">
+        <div class="type-name">Дизайнерский</div>
+        <div class="type-price">от 35 000 ₽/м²</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Дополнительные работы</div>
+    <div class="options-list">
+      <div class="option-item" data-opt="dp" data-mode="per_sqm" data-value="700" data-label="Дизайн-проект (+700 ₽/м²)">
+        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
+        <div><div class="option-name">Нужен дизайн-проект</div><div class="option-add">+ 700 ₽/м²</div></div>
+      </div>
+      <div class="option-item" data-opt="el" data-mode="per_sqm" data-value="3000" data-label="Замена электрики (3 000 ₽/м²)">
+        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
+        <div><div class="option-name">Замена электрики</div><div class="option-add">3 000 ₽/м²</div></div>
+      </div>
+      <div class="option-item" data-opt="pl" data-mode="fixed" data-value="50000" data-label="Разводка сантехники (+50 000 ₽)">
+        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
+        <div><div class="option-name">Разводка сантехнических коммуникаций</div><div class="option-add">+ 50 000 ₽ фиксировано</div></div>
+      </div>
+      <div class="option-item" data-opt="dm" data-mode="per_sqm" data-value="1000" data-label="Демонтажные работы (1 000 ₽/м²)">
+        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
+        <div><div class="option-name">Демонтажные работы</div><div class="option-add">1 000 ₽/м²</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-block">
+    <div class="result-label">Предварительная стоимость</div>
+    <div class="result-range">от <span id="minVal">—</span> до <span id="maxVal">—</span> ₽</div>
+    <div class="result-note">Расчёт ориентировочный. Точная смета — после выезда инженера-технолога.</div>
+  </div>
+
+  <div class="lead-block">
+    <div class="lead-title">Хотите узнать точную смету без скрытых переплат?</div>
+    <p class="lead-sub">Любой калькулятор даёт погрешность до 20%. Оставьте контакты — наш инженер-технолог сделает точный расчёт под ваш бюджет и зафиксирует цену в договоре.</p>
+    <div class="form-fields" id="formFields">
+      <input class="form-input" type="text" id="userName" placeholder="Ваше имя"/>
+      <input class="form-input" type="tel" id="userPhone" placeholder="+7 (___) ___-__-__"/>
+    </div>
+    <button class="cta-btn" id="ctaBtn">
+      Получить точный расчёт и <strong style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em">СКИДКУ</strong> на ремонт
+    </button>
+    <div class="send-error" id="sendError">
+      ⚠️ Не удалось отправить заявку. Пожалуйста, попробуйте ещё раз или свяжитесь с нами напрямую.
+    </div>
+    <div class="success-msg" id="successMsg">
+      <div class="success-icon">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="#B8854A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,10 8,15 17,5"/></svg>
+      </div>
+      <div class="success-title">Спасибо!</div>
+      <p class="success-text">Мы уже начали расчёт. Инженер-технолог свяжется с вами в ближайшее время, чтобы уточнить детали и зафиксировать за вами скидку.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── URL Google Apps Script (токен бота надёжно спрятан там) ───
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfN9VMJrmpdCHYQ2TrOGw-gLimcIo_-BeL5KEWN7enqNRpua2Av3pIOFEDXh13oSI/exec";
+// ───────────────────────────────────────────────────────────────
+
+const fmt = n => Math.round(n).toLocaleString('ru-RU');
+let area = 40, typePrice = 18000, typeLabel = 'GreyBox';
+let minResult = 0, maxResult = 0;
+const optState = {};
+
+function calc() {
+  let dPer = 0, ePer = 0, eFix = 0;
+  document.querySelectorAll('.option-item').forEach(el => {
+    if (!optState[el.dataset.opt]) return;
+    if (el.dataset.opt === 'dp') dPer = +el.dataset.value;
+    else if (el.dataset.mode === 'per_sqm') ePer += +el.dataset.value;
+    else eFix += +el.dataset.value;
+  });
+  minResult = area * (typePrice + dPer) + area * ePer + eFix;
+  maxResult = Math.round(minResult * 1.2);
+  document.getElementById('minVal').textContent = fmt(minResult);
+  document.getElementById('maxVal').textContent = fmt(maxResult);
+}
+
+document.getElementById('area').addEventListener('input', e => {
+  area = Math.max(1, parseInt(e.target.value) || 0); calc();
+});
+
+document.getElementById('typeGrid').addEventListener('click', e => {
+  const c = e.target.closest('.type-card'); if (!c) return;
+  document.querySelectorAll('.type-card').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  typePrice = +c.dataset.price; typeLabel = c.dataset.label; calc();
+});
+
+document.querySelectorAll('.option-item').forEach(el => {
+  el.addEventListener('click', () => {
+    optState[el.dataset.opt] = !optState[el.dataset.opt];
+    el.classList.toggle('checked', optState[el.dataset.opt]); calc();
+  });
+});
+
+document.getElementById('userPhone').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'');
+  if (v.startsWith('7')||v.startsWith('8')) v = v.slice(1);
+  let r = '+7';
+  if (v.length>0) r+=' ('+v.slice(0,3);
+  if (v.length>=4) r+=') '+v.slice(3,6);
+  if (v.length>=7) r+='-'+v.slice(6,8);
+  if (v.length>=9) r+='-'+v.slice(8,10);
+  this.value = r;
+});
+
+function getOptions() {
+  const res = [];
+  document.querySelectorAll('.option-item').forEach(el => {
+    if (optState[el.dataset.opt]) res.push(el.dataset.label);
+  });
+  return res;
+}
+
+function showSuccess() {
+  const fields = document.getElementById('formFields');
+  const btn    = document.getElementById('ctaBtn');
+  const succ   = document.getElementById('successMsg');
+  [fields, btn].forEach(el => { el.style.transition='opacity 0.3s'; el.style.opacity='0'; });
+  setTimeout(() => {
+    fields.style.display = btn.style.display = 'none';
+    succ.style.cssText = 'display:block;opacity:0;transition:opacity 0.4s';
+    requestAnimationFrame(() => succ.style.opacity = '1');
+  }, 320);
+}
+
+document.getElementById('ctaBtn').addEventListener('click', async () => {
+  const name  = document.getElementById('userName').value.trim();
+  const phone = document.getElementById('userPhone').value.trim();
+  const errEl = document.getElementById('sendError');
+
+  if (!name)  { document.getElementById('userName').focus(); return; }
+  if (phone.replace(/\D/g,'').length < 11) { document.getElementById('userPhone').focus(); return; }
+
+  const btn = document.getElementById('ctaBtn');
+  btn.disabled = true;
+  btn.textContent = 'Отправляем...';
+  errEl.style.display = 'none';
+
+  const payload = {
+    name,
+    phone,
+    area,
+    repairType: typeLabel,
+    options: getOptions(),
+    minPrice: fmt(minResult) + ' руб.',
+    maxPrice: fmt(maxResult) + ' руб.'
+  };
+
+  try {
+    // mode:'no-cors' — Apps Script редиректит, CORS-заголовки не приходят,
+    // но POST-запрос долетает и скрипт отрабатывает корректно.
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    showSuccess();
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false;
+    btn.innerHTML = 'Получить точный расчёт и <strong style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em">СКИДКУ</strong> на ремонт';
+    errEl.style.display = 'block';
+  }
+});
+
+calc();
+</script>
+</body>
+</html>
