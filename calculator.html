@@ -89,9 +89,9 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
   <div class="section">
     <div class="section-label">Тип ремонта</div>
     <div class="type-grid" id="typeGrid">
-      <div class="type-card active" data-price="18000" data-label="GreyBox">
+      <div class="type-card active" data-price="18000" data-label="GreyBox (с материалами)">
         <div class="type-name">GreyBox</div>
-        <div class="type-price">18 000 ₽/м²</div>
+        <div class="type-price">18 000 ₽/м² <span style="font-size: 0.75rem; color: var(--accent); display: block; margin-top: 2px;">(с материалами)</span></div>
       </div>
       <div class="type-card" data-price="10000" data-label="Эконом">
         <div class="type-name">Эконом</div>
@@ -160,12 +160,12 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 </div>
 
 <script>
-// ─── URL Google Apps Script (токен бота надёжно спрятан там) ───
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2g5Mo-Krks8C6FZ9Tbx4NWKJXOuyL0hO7gDE2DjUHZ397rz_s0i-CjFa5wwSWoOSYdQ/exec";
-// ───────────────────────────────────────────────────────────────
+// ─── URL Google Apps Script ───
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxy2ZctdZxhrtW-UdAIABJmenMdX65J7pV6OoAaruzq-9N_1HnMRsNe8HTQj5XlXI2xWA/exec";
+// ───────────────────────────────
 
 const fmt = n => Math.round(n).toLocaleString('ru-RU');
-let area = 40, typePrice = 18000, typeLabel = 'GreyBox';
+let area = 40, typePrice = 18000, typeLabel = 'GreyBox (с материалами)';
 let minResult = 0, maxResult = 0;
 const optState = {};
 
@@ -256,8 +256,6 @@ document.getElementById('ctaBtn').addEventListener('click', async () => {
   };
 
   try {
-    // mode:'no-cors' — Apps Script редиректит, CORS-заголовки не приходят,
-    // но POST-запрос долетает и скрипт отрабатывает корректно.
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
