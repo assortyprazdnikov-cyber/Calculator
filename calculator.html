@@ -30,7 +30,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 .type-name{font-size:0.9rem;font-weight:500;}
 .type-price{font-size:0.8rem;color:var(--text-secondary);}
 
-/* Стили для блока дизайна в виде современных плиток */
 .new-options-grid{display:flex;flex-direction:column;gap:0.75rem;}
 .new-opt-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;justify-content:between;align-items:center;cursor:pointer;transition:all 0.2s ease;}
 .new-opt-card:hover{border-color:var(--border-hover);}
@@ -67,7 +66,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
   <h1 class="calc-title">Предварительный расчет стоимости ремонта</h1>
   <p class="calc-subtitle">Укажите параметры — стоимость пересчитается мгновенно</p>
 
-  <!-- 1. Площадь квартиры -->
   <div class="section">
     <div class="section-label">Площадь квартиры</div>
     <div class="area-field">
@@ -76,13 +74,11 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     </div>
   </div>
 
-  <!-- 2. Поле бюджета СРАЗУ после площади -->
   <div class="section">
     <div class="section-label">Каким бюджетом располагаете?</div>
     <input class="form-input" type="text" id="budgetField" placeholder="Например: 1 500 000 ₽"/>
   </div>
 
-  <!-- 3. Выбор типа ремонта -->
   <div class="section">
     <div class="section-label">Тип ремонта</div>
     <div class="type-grid" id="typeGrid">
@@ -105,12 +101,10 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     </div>
   </div>
 
-  <!-- 4. Переименованный блок с новыми опциями без цен в тексте, но с ценой в расчете -->
   <div class="section">
     <div class="section-label">Нужен дизайн проект</div>
     <div class="new-options-grid">
       
-      <!-- Опция 1: Инженерное проектирование (700 руб/м2 в расчете) -->
       <div class="new-opt-card" data-opt="eng" data-value="700" data-label="Инженерное проектирование">
         <div class="new-opt-info">
           <div class="new-opt-title">Инженерное проектирование</div>
@@ -121,7 +115,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
         </button>
       </div>
 
-      <!-- Опция 2: С визуализацией и разверткой (2200 руб/м2 в расчете) -->
       <div class="new-opt-card" data-opt="dp_vis" data-value="2200" data-label="Дизайн-проект с визуализацией и разверткой">
         <div class="new-opt-info">
           <div class="new-opt-title">Дизайн-проект с визуализацией и разверткой</div>
@@ -132,7 +125,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
         </button>
       </div>
 
-      <!-- Опция 3: С подбором материалов (3200 руб/м2 в расчете) -->
       <div class="new-opt-card" data-opt="dp_full" data-value="3200" data-label="Дизайн-проект (визуализация, разверка) с подбором материалов">
         <div class="new-opt-info">
           <div class="new-opt-title">Дизайн-проект (визуализация, развертка) с подбором материалов</div>
@@ -159,7 +151,8 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
       <input class="form-input" type="text" id="userName" placeholder="Ваше имя"/>
       <input class="form-input" type="tel" id="userPhone" placeholder="+7 (___) ___-__-__"/>
     </div>
-    <button class="cta-btn" id="ctaBtn">Получить точный расчёт</button>
+    <!-- ИСПРАВЛЕННЫЙ ТЕКСТ КНОПКИ -->
+    <button class="cta-btn" id="ctaBtn">Получить точный расчет и СКИДКУ на ремонт</button>
     <div class="send-error" id="sendError">⚠️ Ошибка отправки заявки.</div>
     <div class="success-msg" id="successMsg">
       <div class="success-icon">
@@ -184,7 +177,7 @@ function calc() {
 
   document.querySelectorAll('.new-opt-card').forEach(el => {
     if (optState[el.dataset.opt]) {
-      addPricePerM2 += +el.dataset.value; // Суммируем скрытую цену за м2 (700, 2200 или 3200)
+      addPricePerM2 += +el.dataset.value;
     }
   });
 
@@ -205,7 +198,6 @@ document.getElementById('typeGrid').addEventListener('click', e => {
   typePrice = +c.dataset.price; typeLabel = c.dataset.label; calc();
 });
 
-// Переключение карточек проекта
 document.querySelectorAll('.new-opt-card').forEach(el => {
   el.addEventListener('click', () => {
     const isChecked = !optState[el.dataset.opt];
@@ -275,7 +267,8 @@ document.getElementById('ctaBtn').addEventListener('click', async () => {
     document.getElementById('successMsg').style.display = 'block';
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = 'Получить точный расчёт';
+    // Возврат текста кнопки при ошибке
+    btn.textContent = 'Получить точный расчет и СКИДКУ на ремонт';
     errEl.style.display = 'block';
   }
 });
