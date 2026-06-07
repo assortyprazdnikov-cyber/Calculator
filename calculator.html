@@ -44,10 +44,8 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 .check-icon{display:none;width:10px;height:10px;}
 .option-item.checked .check-icon{display:block;}
 .check-icon svg{stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.option-name{font-size:0.9rem;color:var(--text-primary);}
+.option-name{font-size:0.9rem;color:var(--text-primary);line-height:1.4;}
 .option-item.checked .option-name{color:var(--accent-hover);}
-.option-add{font-size:0.78rem;color:var(--text-secondary);margin-top:0.1rem;}
-.option-item.checked .option-add{color:var(--accent);}
 .result-block{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;}
 .result-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6B6860;font-weight:500;margin-bottom:0.75rem;}
 .result-range{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:400;color:var(--text-primary);line-height:1.2;}
@@ -87,6 +85,11 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
   </div>
 
   <div class="section">
+    <div class="section-label">Каким бюджетом располагаете</div>
+    <input class="form-input" type="text" id="budget" placeholder="Например, 1 500 000 ₽"/>
+  </div>
+
+  <div class="section">
     <div class="section-label">Тип ремонта</div>
     <div class="type-grid" id="typeGrid">
       <div class="type-card active" data-price="18000" data-label="GreyBox (с материалами)">
@@ -109,23 +112,19 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
   </div>
 
   <div class="section">
-    <div class="section-label">Дополнительные работы</div>
+    <div class="section-label">Нужен дизайн проект</div>
     <div class="options-list">
-      <div class="option-item" data-opt="dp" data-mode="per_sqm" data-value="700" data-label="Дизайн-проект (+700 ₽/м²)">
+      <div class="option-item" data-opt="ip" data-value="700" data-label="Инженерное проектирование">
         <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Нужен дизайн-проект</div><div class="option-add">+ 700 ₽/м²</div></div>
+        <div><div class="option-name">Инженерное проектирование</div></div>
       </div>
-      <div class="option-item" data-opt="el" data-mode="per_sqm" data-value="3000" data-label="Замена электрики (3 000 ₽/м²)">
+      <div class="option-item" data-opt="dp_vr" data-value="2200" data-label="Дизайн-проект с визуализацией и разверткой">
         <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Замена электрики</div><div class="option-add">3 000 ₽/м²</div></div>
+        <div><div class="option-name">Дизайн-проект с визуализацией и разверткой</div></div>
       </div>
-      <div class="option-item" data-opt="pl" data-mode="fixed" data-value="50000" data-label="Разводка сантехники (+50 000 ₽)">
+      <div class="option-item" data-opt="dp_vrm" data-value="3200" data-label="Дизайн-проект (визуализация, разверка) с подбором материалов">
         <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Разводка сантехнических коммуникаций</div><div class="option-add">+ 50 000 ₽ фиксировано</div></div>
-      </div>
-      <div class="option-item" data-opt="dm" data-mode="per_sqm" data-value="1000" data-label="Демонтажные работы (1 000 ₽/м²)">
-        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Демонтажные работы</div><div class="option-add">1 000 ₽/м²</div></div>
+        <div><div class="option-name">Дизайн-проект (визуализация, развертка) с подбором материалов</div></div>
       </div>
     </div>
   </div>
@@ -170,14 +169,13 @@ let minResult = 0, maxResult = 0;
 const optState = {};
 
 function calc() {
-  let dPer = 0, ePer = 0, eFix = 0;
+  let hiddenOptionsPricePerM2 = 0;
   document.querySelectorAll('.option-item').forEach(el => {
-    if (!optState[el.dataset.opt]) return;
-    if (el.dataset.opt === 'dp') dPer = +el.dataset.value;
-    else if (el.dataset.mode === 'per_sqm') ePer += +el.dataset.value;
-    else eFix += +el.dataset.value;
+    if (optState[el.dataset.opt]) {
+      hiddenOptionsPricePerM2 += +el.dataset.value;
+    }
   });
-  minResult = area * (typePrice + dPer) + area * ePer + eFix;
+  minResult = area * (typePrice + hiddenOptionsPricePerM2);
   maxResult = Math.round(minResult * 1.2);
   document.getElementById('minVal').textContent = fmt(minResult);
   document.getElementById('maxVal').textContent = fmt(maxResult);
@@ -233,9 +231,10 @@ function showSuccess() {
 }
 
 document.getElementById('ctaBtn').addEventListener('click', async () => {
-  const name  = document.getElementById('userName').value.trim();
-  const phone = document.getElementById('userPhone').value.trim();
-  const errEl = document.getElementById('sendError');
+  const name   = document.getElementById('userName').value.trim();
+  const phone  = document.getElementById('userPhone').value.trim();
+  const budget = document.getElementById('budget').value.trim() || 'Не указан';
+  const errEl  = document.getElementById('sendError');
 
   if (!name)  { document.getElementById('userName').focus(); return; }
   if (phone.replace(/\D/g,'').length < 11) { document.getElementById('userPhone').focus(); return; }
@@ -249,6 +248,7 @@ document.getElementById('ctaBtn').addEventListener('click', async () => {
     name,
     phone,
     area,
+    budget,
     repairType: typeLabel,
     options: getOptions(),
     minPrice: fmt(minResult) + ' руб.',
