@@ -29,15 +29,19 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 .type-card.active{border-color:var(--accent);background:var(--accent-light);}
 .type-name{font-size:0.9rem;font-weight:500;}
 .type-price{font-size:0.8rem;color:var(--text-secondary);}
-.options-list{display:flex;flex-direction:column;gap:0.5rem;}
-.option-item{display:flex;align-items:center;gap:0.85rem;background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:0.8rem 1rem;cursor:pointer;}
-.option-item.checked{border-color:var(--accent);background:var(--accent-light);}
-.custom-check{width:18px;height:18px;border:1.5px solid var(--stone-dark);border-radius:5px;display:flex;align-items:center;justify-content:center;background:#fff;}
-.option-item.checked .custom-check{background:var(--accent);border-color:var(--accent);}
-.check-icon{display:none;width:10px;height:10px;}
-.option-item.checked .check-icon{display:block;}
-.check-icon svg{stroke:#fff;fill:none;stroke-width:2.5;}
-.option-name{font-size:0.9rem;line-height:1.4;}
+
+/* Стили для блока дизайна в виде современных плиток */
+.new-options-grid{display:flex;flex-direction:column;gap:0.75rem;}
+.new-opt-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;justify-content:between;align-items:center;cursor:pointer;transition:all 0.2s ease;}
+.new-opt-card:hover{border-color:var(--border-hover);}
+.new-opt-card.checked{border-color:var(--accent);background:var(--accent-light);}
+.new-opt-info{flex:1;padding-right:1rem;}
+.new-opt-title{font-size:0.95rem;font-weight:500;color:var(--text-primary);line-height:1.4;}
+.new-opt-btn{border:0.5px solid var(--border);padding:0.45rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:500;background:#fff;color:var(--text-secondary);display:flex;align-items:center;gap:0.35rem;white-space:nowrap;transition:all 0.2s ease;}
+.new-opt-card.checked .new-opt-btn{background:var(--accent);color:#fff;border-color:var(--accent);}
+.new-opt-btn .icon-check{display:none;width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;}
+.new-opt-card.checked .new-opt-btn .icon-check{display:inline-block;}
+
 .result-block{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;}
 .result-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6B6860;font-weight:500;margin-bottom:0.75rem;}
 .result-range{font-size:1.85rem;font-weight:400;}
@@ -52,6 +56,7 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 .cta-btn:disabled{opacity:0.65;}
 .send-error{display:none;font-size:0.8rem;color:#b94040;background:#fff0f0;border:0.5px solid #f5c0c0;border-radius:var(--radius);padding:0.75rem 1rem;margin-top:0.75rem;}
 .success-msg{display:none;text-align:center;padding:1rem 0;}
+.success-icon{width:48px;height:48px;background:var(--accent-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
 .success-title{font-size:1.3rem;margin-bottom:0.5rem;}
 .success-text{font-size:0.85rem;color:var(--text-secondary);line-height:1.65;}
 </style>
@@ -62,6 +67,7 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
   <h1 class="calc-title">Предварительный расчет стоимости ремонта</h1>
   <p class="calc-subtitle">Укажите параметры — стоимость пересчитается мгновенно</p>
 
+  <!-- 1. Площадь квартиры -->
   <div class="section">
     <div class="section-label">Площадь квартиры</div>
     <div class="area-field">
@@ -70,11 +76,13 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     </div>
   </div>
 
+  <!-- 2. Поле бюджета СРАЗУ после площади -->
   <div class="section">
     <div class="section-label">Каким бюджетом располагаете?</div>
     <input class="form-input" type="text" id="budgetField" placeholder="Например: 1 500 000 ₽"/>
   </div>
 
+  <!-- 3. Выбор типа ремонта -->
   <div class="section">
     <div class="section-label">Тип ремонта</div>
     <div class="type-grid" id="typeGrid">
@@ -97,31 +105,56 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     </div>
   </div>
 
+  <!-- 4. Переименованный блок с новыми опциями без цен в тексте, но с ценой в расчете -->
   <div class="section">
     <div class="section-label">Нужен дизайн проект</div>
-    <div class="options-list">
-      <div class="option-item" data-opt="ip" data-value="700" data-label="Инженерное проектирование">
-        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Инженерное проектирование</div></div>
+    <div class="new-options-grid">
+      
+      <!-- Опция 1: Инженерное проектирование (700 руб/м2 в расчете) -->
+      <div class="new-opt-card" data-opt="eng" data-value="700" data-label="Инженерное проектирование">
+        <div class="new-opt-info">
+          <div class="new-opt-title">Инженерное проектирование</div>
+        </div>
+        <button class="new-opt-btn">
+          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+          <span class="btn-text">Выбрать</span>
+        </button>
       </div>
-      <div class="option-item" data-opt="dp_vr" data-value="2200" data-label="Дизайн-проект с визуализацией и разверткой">
-        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Дизайн-проект с визуализацией и разверткой</div></div>
+
+      <!-- Опция 2: С визуализацией и разверткой (2200 руб/м2 в расчете) -->
+      <div class="new-opt-card" data-opt="dp_vis" data-value="2200" data-label="Дизайн-проект с визуализацией и разверткой">
+        <div class="new-opt-info">
+          <div class="new-opt-title">Дизайн-проект с визуализацией и разверткой</div>
+        </div>
+        <button class="new-opt-btn">
+          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+          <span class="btn-text">Выбрать</span>
+        </button>
       </div>
-      <div class="option-item" data-opt="dp_vrm" data-value="3200" data-label="Дизайн-проект (визуализация, разверка) с подбором материалов">
-        <div class="custom-check"><span class="check-icon"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></span></div>
-        <div><div class="option-name">Дизайн-проект (визуализация, развертка) с подбором материалов</div></div>
+
+      <!-- Опция 3: С подбором материалов (3200 руб/м2 в расчете) -->
+      <div class="new-opt-card" data-opt="dp_full" data-value="3200" data-label="Дизайн-проект (визуализация, разверка) с подбором материалов">
+        <div class="new-opt-info">
+          <div class="new-opt-title">Дизайн-проект (визуализация, развертка) с подбором материалов</div>
+        </div>
+        <button class="new-opt-btn">
+          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+          <span class="btn-text">Выбрать</span>
+        </button>
       </div>
+
     </div>
   </div>
 
   <div class="result-block">
     <div class="result-label">Предварительная стоимость</div>
     <div class="result-range">от <span id="minVal">—</span> до <span id="maxVal">—</span> ₽</div>
+    <div class="result-note">Расчёт ориентировочный. Точная смета — после выезда инженера-технолога.</div>
   </div>
 
   <div class="lead-block">
     <div class="lead-title">Хотите узнать точную смету без скрытых переплат?</div>
+    <p class="lead-sub">Любой калькулятор даёт погрешность до 20%. Оставьте контакты — наш инженер-технолог сделает точный расчёт под ваш бюджет и зафиксирует цену в договоре.</p>
     <div class="form-fields" id="formFields">
       <input class="form-input" type="text" id="userName" placeholder="Ваше имя"/>
       <input class="form-input" type="tel" id="userPhone" placeholder="+7 (___) ___-__-__"/>
@@ -129,8 +162,11 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     <button class="cta-btn" id="ctaBtn">Получить точный расчёт</button>
     <div class="send-error" id="sendError">⚠️ Ошибка отправки заявки.</div>
     <div class="success-msg" id="successMsg">
+      <div class="success-icon">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="#B8854A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,10 8,15 17,5"/></svg>
+      </div>
       <div class="success-title">Спасибо!</div>
-      <p class="success-text">Заявка успешно отправлена.</p>
+      <p class="success-text">Мы уже начали расчёт. Инженер-технолог свяжется с вами в ближайшее время, чтобы уточнить детали и зафиксировать за вами скидку.</p>
     </div>
   </div>
 </div>
@@ -144,11 +180,15 @@ let minResult = 0, maxResult = 0;
 const optState = {};
 
 function calc() {
-  let addPrice = 0;
-  document.querySelectorAll('.option-item').forEach(el => {
-    if (optState[el.dataset.opt]) addPrice += +el.dataset.value;
+  let addPricePerM2 = 0;
+
+  document.querySelectorAll('.new-opt-card').forEach(el => {
+    if (optState[el.dataset.opt]) {
+      addPricePerM2 += +el.dataset.value; // Суммируем скрытую цену за м2 (700, 2200 или 3200)
+    }
   });
-  minResult = area * (typePrice + addPrice);
+
+  minResult = area * (typePrice + addPricePerM2);
   maxResult = Math.round(minResult * 1.2);
   document.getElementById('minVal').textContent = fmt(minResult);
   document.getElementById('maxVal').textContent = fmt(maxResult);
@@ -165,10 +205,17 @@ document.getElementById('typeGrid').addEventListener('click', e => {
   typePrice = +c.dataset.price; typeLabel = c.dataset.label; calc();
 });
 
-document.querySelectorAll('.option-item').forEach(el => {
+// Переключение карточек проекта
+document.querySelectorAll('.new-opt-card').forEach(el => {
   el.addEventListener('click', () => {
-    optState[el.dataset.opt] = !optState[el.dataset.opt];
-    el.classList.toggle('checked', optState[el.dataset.opt]); calc();
+    const isChecked = !optState[el.dataset.opt];
+    optState[el.dataset.opt] = isChecked;
+    el.classList.toggle('checked', isChecked);
+    
+    const btnText = el.querySelector('.btn-text');
+    btnText.textContent = isChecked ? 'Добавлено' : 'Выбрать';
+    
+    calc();
   });
 });
 
@@ -185,7 +232,7 @@ document.getElementById('userPhone').addEventListener('input', function() {
 
 function getOptions() {
   const res = [];
-  document.querySelectorAll('.option-item').forEach(el => {
+  document.querySelectorAll('.new-opt-card').forEach(el => {
     if (optState[el.dataset.opt]) res.push(el.dataset.label);
   });
   return res;
