@@ -30,16 +30,22 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 .type-name{font-size:0.9rem;font-weight:500;}
 .type-price{font-size:0.8rem;color:var(--text-secondary);}
 
+/* Стили для карточек с квадратиками-галочками */
 .new-options-grid{display:flex;flex-direction:column;gap:0.75rem;}
-.new-opt-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;justify-content:between;align-items:center;cursor:pointer;transition:all 0.2s ease;}
+.new-opt-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:all 0.2s ease;}
 .new-opt-card:hover{border-color:var(--border-hover);}
 .new-opt-card.checked{border-color:var(--accent);background:var(--accent-light);}
-.new-opt-info{flex:1;padding-right:1rem;}
+
+/* Стиль самого квадратика */
+.custom-checkbox{width:18px;height:18px;border:1px solid var(--stone-dark);border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s ease;}
+.new-opt-card.checked .custom-checkbox{background:var(--accent);border-color:var(--accent);}
+
+/* Птичка внутри квадратика */
+.custom-checkbox svg{display:none;width:11px;height:11px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.new-opt-card.checked .custom-checkbox svg{display:block;}
+
+.new-opt-info{flex:1;}
 .new-opt-title{font-size:0.95rem;font-weight:500;color:var(--text-primary);line-height:1.4;}
-.new-opt-btn{border:0.5px solid var(--border);padding:0.45rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:500;background:#fff;color:var(--text-secondary);display:flex;align-items:center;gap:0.35rem;white-space:nowrap;transition:all 0.2s ease;}
-.new-opt-card.checked .new-opt-btn{background:var(--accent);color:#fff;border-color:var(--accent);}
-.new-opt-btn .icon-check{display:none;width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;}
-.new-opt-card.checked .new-opt-btn .icon-check{display:inline-block;}
 
 .result-block{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;}
 .result-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6B6860;font-weight:500;margin-bottom:0.75rem;}
@@ -106,33 +112,30 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
     <div class="new-options-grid">
       
       <div class="new-opt-card" data-opt="eng" data-value="700" data-label="Инженерное проектирование">
+        <div class="custom-checkbox">
+          <svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+        </div>
         <div class="new-opt-info">
           <div class="new-opt-title">Инженерное проектирование</div>
         </div>
-        <button class="new-opt-btn">
-          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
-          <span class="btn-text">Выбрать</span>
-        </button>
       </div>
 
       <div class="new-opt-card" data-opt="dp_vis" data-value="2200" data-label="Дизайн-проект с визуализацией и разверткой">
+        <div class="custom-checkbox">
+          <svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+        </div>
         <div class="new-opt-info">
           <div class="new-opt-title">Дизайн-проект с визуализацией и разверткой</div>
         </div>
-        <button class="new-opt-btn">
-          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
-          <span class="btn-text">Выбрать</span>
-        </button>
       </div>
 
       <div class="new-opt-card" data-opt="dp_full" data-value="3200" data-label="Дизайн-проект (визуализация, разверка) с подбором материалов">
+        <div class="custom-checkbox">
+          <svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+        </div>
         <div class="new-opt-info">
           <div class="new-opt-title">Дизайн-проект (визуализация, развертка) с подбором материалов</div>
         </div>
-        <button class="new-opt-btn">
-          <svg class="icon-check" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
-          <span class="btn-text">Выбрать</span>
-        </button>
       </div>
 
     </div>
@@ -151,7 +154,6 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
       <input class="form-input" type="text" id="userName" placeholder="Ваше имя"/>
       <input class="form-input" type="tel" id="userPhone" placeholder="+7 (___) ___-__-__"/>
     </div>
-    <!-- ИСПРАВЛЕННЫЙ ТЕКСТ КНОПКИ -->
     <button class="cta-btn" id="ctaBtn">Получить точный расчет и СКИДКУ на ремонт</button>
     <div class="send-error" id="sendError">⚠️ Ошибка отправки заявки.</div>
     <div class="success-msg" id="successMsg">
@@ -166,6 +168,7 @@ body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-prim
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwip-V8i0i_z_-JE1GU_UtPlox71LKh3fLN4RNaaLhVBtl3qTgBwWN0sABO9sOMi9zLw/exec";
+
 const fmt = n => Math.round(n).toLocaleString('ru-RU');
 let area = 40, typePrice = 18000, typeLabel = 'GreyBox (с материалами)';
 let minResult = 0, maxResult = 0;
@@ -173,13 +176,11 @@ const optState = {};
 
 function calc() {
   let addPricePerM2 = 0;
-
   document.querySelectorAll('.new-opt-card').forEach(el => {
     if (optState[el.dataset.opt]) {
       addPricePerM2 += +el.dataset.value;
     }
   });
-
   minResult = area * (typePrice + addPricePerM2);
   maxResult = Math.round(minResult * 1.2);
   document.getElementById('minVal').textContent = fmt(minResult);
@@ -197,15 +198,12 @@ document.getElementById('typeGrid').addEventListener('click', e => {
   typePrice = +c.dataset.price; typeLabel = c.dataset.label; calc();
 });
 
+// Клик по карточке переключает галочку в квадратике
 document.querySelectorAll('.new-opt-card').forEach(el => {
   el.addEventListener('click', () => {
     const isChecked = !optState[el.dataset.opt];
     optState[el.dataset.opt] = isChecked;
     el.classList.toggle('checked', isChecked);
-    
-    const btnText = el.querySelector('.btn-text');
-    btnText.textContent = isChecked ? 'Добавлено' : 'Выбрать';
-    
     calc();
   });
 });
@@ -266,7 +264,6 @@ document.getElementById('ctaBtn').addEventListener('click', async () => {
     document.getElementById('successMsg').style.display = 'block';
   } catch (err) {
     btn.disabled = false;
-    // Возврат текста кнопки при ошибке
     btn.textContent = 'Получить точный расчет и СКИДКУ на ремонт';
     errEl.style.display = 'block';
   }
